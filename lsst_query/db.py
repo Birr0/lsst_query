@@ -3,6 +3,8 @@ import pyvo
 import os
 from dotenv import load_dotenv
 from tqdm import tqdm
+
+
 load_dotenv()
 
 def get_auth():
@@ -31,7 +33,7 @@ def submit_job_list(statements):
     jobs = set()
     for stmt in statements:
         job = service().submit_job(
-            stmt
+            stmt, maxrec=1000000
         )
         job.run()
         jobs.add(job)
@@ -62,6 +64,15 @@ def get_job_results(jobs):
                 pass
     return resp
 
-def cleanup_jobs():
-    # To-Do
-    return
+def cleanup_jobs(job_ids = []):
+    serv = service()
+    if not job_ids:
+        job_ids = [job.jobid for job in service().get_job_list()]
+    for job in job_ids:
+        url = f"https://data.lsst.cloud/api/ssotap/async/{job.jobid}" 
+        try:
+            response = serv._session.post(url, data={"ACTION": "DELETE"})
+            response.raise_for_status()
+        except requests.RequestException as ex:
+            # Deal with this better
+            print("Error")
