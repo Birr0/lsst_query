@@ -9,7 +9,7 @@ pip install -r requirements.txt
 
 2) Add your API token in a .env file in the lsst_query folder. Make sure when creating the key you tick all your necessary permissions.
 
-3) Example usage of some of the query helper function
+3) Example usage of the query helper function:
 ```python
 from db import query
 
